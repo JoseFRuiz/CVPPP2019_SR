@@ -167,7 +167,7 @@ Our proposed formulation is expressed as follows
 Note that $G$ maps the labeled-LR data $z$ to a higher-resolution domain. Since we assume that the HR labels are unknown, the classifier is trained with the SR data. Algorithm~\ref{alg:srcgan} contains the pseudo-code of our method.
 
 \begin{algorithm}[h]
-    \caption{Minibatch stochastic gradient descent training of the \textbf{weakly supervised adversarial network}.}
+    \caption{Minibatch gradient descent training of the \textbf{weakly supervised adversarial network}.}
     \label{alg:srcgan}
     \begin{algorithmic}
     \FOR{number of training iterations}
@@ -215,24 +215,16 @@ Figure~\ref{fig:D_net} shows the architecture for $C$ and $D.$ We use the same a
 
 \section{Experiments}
 
-\texttt{[THIS SECTION IS IN PROGRESS.  TABLES CONTAIN CLASSIFICATION ACCURACY ON HR, SR, AND LR DATA OF TWO DATASETS: LEAF-BASED DISEASE CLASSIFICATION AND CT SCANS CORES OF TURFACE AND ROOTS. FIGURES CONTAIN EXAMPLES OF IMAGES ON THESE DATASETS AND THE RESULTS OF THE METHOD APPLIED TO THE X-RAY BACKSCATTER SCANS.]}\\
+% \texttt{[THIS SECTION IS IN PROGRESS.  TABLES CONTAIN CLASSIFICATION ACCURACY ON HR, SR, AND LR DATA OF TWO DATASETS: LEAF-BASED DISEASE CLASSIFICATION AND CT SCANS CORES OF TURFACE AND ROOTS. FIGURES CONTAIN EXAMPLES OF IMAGES ON THESE DATASETS AND THE RESULTS OF THE METHOD APPLIED TO THE X-RAY BACKSCATTER SCANS.]}\\
 
-We need labels of the LR images at image level to train $C$.
+We perform experiments on three datasets. The first one contains 3719 images (from PlantVillage project~\cite{Hughes2015}) of tomato leaves divided into two classes: Healthy (1592) and Bacteria (2127). The second dataset is formed by the images of the scans of two CT cores.  The third dataset consists of 8 buried-roots scans and 4 soil scans, which were acquired by the authors using a novel x-ray backscatter system. Note that our method requires labels of the LR images at image level. As gradient-based learning rule, we use the Adaptive Moment Estimation (Adam). 
 
 \subsection{Disease Classification}
-
-We apply our method to the PlantVillage-Dataset \cite{Mohanty2016} %\url{https://github.com/spMohanty/PlantVillage-Dataset}
-
-\begin{figure*}[h]
-\begin{center}
-\includegraphics[scale=0.40]{results/srimages.pdf}
-\end{center}
-   \caption{a) Tomato - healthy. b) Tomato - bacterial spot}
-\label{fig:srimages}
-\end{figure*}
+%\url{https://github.com/spMohanty/PlantVillage-Dataset}
+We apply our method to an image-based plant disease classification task~\cite{Mohanty2016}. We consider the original grayscale images ($256\times 256$) of the PlantVillage dataset as HR data. We create the LR versions of this images by downsampling 2 (LR2x: $128\times 128$), 4 (LR4x: $64\times 64$), 8 (LR8x: $32\times 32$), and 16 (LR16x: $16\times 16$) times and upsampling them again to $256\times 256$ by a bicubic interpolation. Table~\ref{tab:results} shows the classification accuracy in a test set (200 images per class) obtained when trained the classifier only with HR data (baseline) and when trained with LR data and with SR data (SR2x, SR4x, SR8x, and SR16x applied to LR2x, LR4x, LR8x, and LR16x, respectively). Figure~\ref{fig:srimages} contains some examples of HR, LR and SR of each class (Tomato - healthy and Tomato - bacterial spot).
 
 \begin{table}[h]
-\caption{Classification results. HR: high resolution images ($256\times 256$), LR2x: down-sampling images ($128\times 128$), SR2x: LR2x after applying SR method, LR4x: down-sampling HR images ($64\times 64$), and SR4x: LR4x after applying SR method.}
+\caption{Classification performance on the PlantVillage dataset applied to a test set.}
 \label{tab:results}
 \centering
 \begin{tabular}{|l|c|c|c|}
@@ -259,14 +251,18 @@ SR16x & \textbf{59.7} & \textbf{94.5} & 25.0 \\
 
 \begin{figure*}[h]
 \begin{center}
-\includegraphics[scale=0.40]{results/srimages_cores.pdf}
+\includegraphics[scale=0.40]{results/srimages.pdf}
 \end{center}
-   \caption{a) Turface+Roots. b) Turface}
-\label{fig:srimages_cores}
+   \caption{a) Tomato - healthy. b) Tomato - bacterial spot} 
+\label{fig:srimages}
 \end{figure*}
 
+\subsection{CT cores-SR}
+\texttt{[THESE RESULTS MIGHT BE REMOVED]}
+In this experiment, we use CT scans of two cores, one that contains only turface and other that contains roots and turface. Table~\ref{tab:results_cores} shows the classification accuracy in a test set (200 images per class). Figure~\ref{fig:srimages_cores} contains some examples of HR, LR and SR of each class (Turface+Roots and Turface).
+
 \begin{table}[h]
-\caption{Classification results-cores. HR: high resolution images ($256\times 256$), LR2x: down-sampling images ($128\times 128$), SR2x: LR2x after applying SR method, LR4x: down-sampling HR images ($64\times 64$), and SR4x: LR4x after applying SR method.}
+\caption{Classification performance on the CT cores dataset applied to a test set.}
 \label{tab:results_cores}
 \centering
 \begin{tabular}{|l|c|c|c|}
@@ -291,11 +287,18 @@ SR16x & \textbf{79.9} & \textbf{59.8} & 100 \\
 \end{tabular}
 \end{table}
 
-\subsection{Roots-SR}
+\begin{figure*}[h]
+\begin{center}
+\includegraphics[scale=0.40]{results/srimages_cores.pdf}
+\end{center}
+   \caption{a) Turface+Roots. b) Turface}
+\label{fig:srimages_cores}
+\end{figure*}
+
+\subsection{X-ray backscatter data-SR}
 
 % See the dataset at http://gigadb.org/dataset/100346 
-
-Figure~\ref{fig:srtest} shows SR applied to X-ray backscatter images.
+X-ray bacscatter technology allows scanning roots of plants non-destructively. We are currently working on the developing of a device to this end. Figure~\ref{fig:srtest} shows SR applied to this type of data.
 
 \begin{figure*}[h]
 \begin{center}
