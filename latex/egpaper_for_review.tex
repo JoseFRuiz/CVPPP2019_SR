@@ -71,35 +71,27 @@ University of Florida, Department of Electrical and Computer Engineering, Gaines
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
+%\texttt{[THIS SECTION IS IN PROGRESS... MAIN IDEAS ARE LISTED BELOW]}\\
+%\texttt{[MOTIVATION]}\\
+High-throughput image-based phenotyping facilitates the measurement of features of the plants required for crop production analysis and the design of ecological models. This technology consists of tools of hardware and software that allows the acquisition and processing of the target biophysical data. Tasks that traditionally are carried out by visual inspection can be made efficiently by using standard and hyper-spectral cameras~\cite{Fahlgren2015}. However, these sensors usually have resolution limitations or are not appropriate to acquire a certain type of data, e.g., below-ground data. In this paper, we address the resolution problem by developing a weakly supervised super-resolution (SR) algorithm (which needs some image level labels) and apply it to three tasks:  i) disease classification, iii) soil/root classification on CT scans, and iii) root imaging based on a novel X-ray backscatter technology.
 
-\texttt{[THIS SECTION IS IN PROGRESS... MAIN IDEAS ARE LISTED BELOW]}\\
+%\texttt{[DIGITAL SIGNAL PROCESSING AND MACHINE LEARNING FOR ROOTS PHENOTYPING]}
 
-\texttt{[MOTIVATION]}\\
-High-throughput image-based phenotyping facilitates the measurement of features of the plants required for crop production analysis and the design of ecological models. This technology consists of tools of hardware and software that allows the acquisition and processing of the target biophysical data. Tasks that traditionally are carried out by visual inspection can be made efficiently by using standard and hyper-spectral cameras~\cite{Fahlgren2015}. However, these sensors usually have resolution limitation or are not appropriate to acquire a certain type of data, e.g., below-ground data. In this paper, we address the resolution problem by developing a weakly supervised super-resolution (SR) algorithm and apply it to two tasks:  i) disease classification and ii) root imaging based on a novel X-ray backscatter technology.
+Digital signal processing (DSP) and machine learning (ML) techniques have been applied in phenotyping tasks such as detection, classification, and prediction~\cite{Singh2018}. Particularly, deep-learning has become very popular in the ML community but has not been extensively studied for plant phenotyping applications~\cite{Ubbens2017}. In \cite{Ramcharan2017}, a method for disease detection based on a deep learning model is proposed.
 
-\texttt{[DIGITAL SIGNAL PROCESSING AND MACHINE LEARNING FOR ROOTS PHENOTYPING]}
+Image acquisition and processing on uncontrolled conditions is a challenge for automatic plant phenotyping that implies handling issues such as uneven illumination, complex background or low resolution (LR). These complications result more noticeable for certain applications. In this study, we are particularly interested in the imaging of roots in situ, where it is difficult to distinguish the target from their surroundings~\cite{Tabb2018}. More advanced non-invasive techniques for this application include electrical capacitance and ground-penetrating radar. However, these sensors still have restrictions in depth and resolution~\cite{Araus2014}.
+%\texttt{[SUPER RESOLUTION]}
 
-Digital signal processing (DSP) and machine learning (ML) techniques have been applied in phenotyping tasks for segmentation and classification of images. In \cite{Ramcharan2017}, a method for disease detection based on a deep learning model is proposed.
+The SR task consists of recovering HR images from LR images. Many SR approaches can be found in the DSP and ML literature. Applications such as medical diagnostic heavily rely on high-quality images~\cite{Zhang2012}. This is an inherently ill-posed problem, i.e., no unique solution exists~\cite{Hui2018}. Therefore, the SR methods require regularization terms to constrain the search space. The loss function of an SR problem is usually the mean squared error (MSE) between the estimated SR image and the original HR image plus the regularization term~\cite{Ledig2017}. MSE minimization might not avoid visual artifacts. Some SR methods require pairs of LR-HR examples~\cite{Zeyde2012}, which is a practical disadvantage.
 
-Deep-learning has become very popular in the machine learning community but has not been extensively studied for plant phenotyping applications~\cite{Ubbens2017}.
+Super-resolution algorithms promote the development of new alternatives to sense data, such as X-ray based sensors, since efficient algorithms can help to overcome weakness in hardware. A previous study about SR of plant images is described in \cite{Yamamoto2017}.
 
-Handling low-quality images and image acquisition under non-controlled conditions is a challenge for automatic plant phenotyping.
-
-Phenotyping roots in situ is a challenging task since most of the cases it is difficult to distinguish them from their surroundings~\cite{Tabb2018}. More advanced non-invasive techniques include electrical capacitance and ground-penetrating radar. However, these sensors still have restrictions in depth and resolution~\cite{Araus2014}.
-
-\texttt{[SUPER RESOLUTION]}
-
-The SR task consists of recovering HR images from low-resolution (LR) images. Many SR approaches can be found in the DSP and ML literature. Applications such as medical diagnostic heavily rely on high-quality images~\cite{Zhang2012}. This is an inherently ill-posed problem, i.e., no unique solution exists~\cite{Hui2018}. Therefore, the SR methods require regularization terms to constrain the search space.
-
-Super-resolution algorithms promote the development of new alternatives to sense data, such as X-ray based sensors, since efficient algorithms can help to overcome weakness in hardware.
-
-A previous study about SR of plant images is described in \cite{Yamamoto2017}.
-
-The loss function of an SR problem is usually the mean squared error (MSE) between the estimated SR image and the original HR image plus a regularization term~\cite{Ledig2017}. MSE minimization might not avoid visual artifacts. Some SR methods require pairs of LR-HR examples~\cite{Zeyde2012}, which is a practical disadvantage. 
 
 A general adversarial network (GAN) can be used to learn a transformation between two domains~\cite{Hong2018}. In \cite{Giuffrida2017}, GANs are used for data augmentation in plant phenotyping.
 
-\texttt{[BRIEF DESCRIPTION OF THE PROPOSED METHOD]}
+%\texttt{[BRIEF DESCRIPTION OF THE PROPOSED METHOD]}
+
+We proposed a weakly supervised GAN for increasing the resolution of LR plant and root images. This is a weakly supervised-approach since it uses image-level labels to learn to enhance lower level details. In this configuration, the regularization of the SR problem force the generated images to be both, ``realistic-like'' images and appropriate for classification. The remainder of this paper is divided as follows: Sec.~\ref{sec:methods} described the proposed method, Sec.~\ref{sec:experiments} includes details of the implementation of the experiments and the results on three types of data, and Sec.~\ref{sec:conclusion} concludes the study.
 
 % ``Here high-throughput image-based phenotyping is defined as technology that can minimally image hundreds of plants per day.'' ``The goal of plant imaging and analysis is to measure the physiological, growth, development, and other phenotypic properties of plants through automated processes.'' ``Digital camera technology has become relatively inexpensive and ubiquitous, leading to a recent surge in high-throughput phenotyping systems that utilize plant imaging to capture data''~\cite{Fahlgren2015}.
 
@@ -121,6 +113,7 @@ A general adversarial network (GAN) can be used to learn a transformation betwee
 %-------------------------------------------------------------------------
 
 \section{Methods}
+\label{sec:methods}
 % To draw NN http://alexlenail.me/NN-SVG/index.html
 
 \subsection{Adversarial Networks}
@@ -184,7 +177,10 @@ Note that $G$ maps the labeled-LR data $z$ to a higher-resolution domain. Since 
     \]
     \stateb Update the generator by descending its stochastic gradient
     \[
-    \nabla_{\theta_{g}} \frac{1}{m} \sum_{i=1}^m \log(1- D(G(x_i)))+\log(1- D(G(y_i))).\]
+    \begin{aligned}
+    \nabla_{\theta_{g}} \frac{1}{m} \sum_{i=1}^m \left[\log C(G(y_i)) + \log(1 - C(G(z_i))) \right. \\ \left. + \log(1- D(G(x_i)))+\log(1- D(G(y_i))) \right].
+    \end{aligned}
+    \]
     %\stateb Compute $m$ code-words $\{z_1,\ldots, z_m\}$ by $z_i = G(x_i)$
     \stateb Update the decoder by descending its stochastic gradient
     \ENDFOR
@@ -214,6 +210,7 @@ Figure~\ref{fig:D_net} shows the architecture for $C$ and $D.$ We use the same a
 %------------------------------------------------------------------------
 
 \section{Experiments}
+\label{sec:experiments}
 
 % \texttt{[THIS SECTION IS IN PROGRESS.  TABLES CONTAIN CLASSIFICATION ACCURACY ON HR, SR, AND LR DATA OF TWO DATASETS: LEAF-BASED DISEASE CLASSIFICATION AND CT SCANS CORES OF TURFACE AND ROOTS. FIGURES CONTAIN EXAMPLES OF IMAGES ON THESE DATASETS AND THE RESULTS OF THE METHOD APPLIED TO THE X-RAY BACKSCATTER SCANS.]}\\
 
@@ -309,6 +306,7 @@ X-ray bacscatter technology allows scanning roots of plants non-destructively. W
 \end{figure*}
 
 \section{Concluding remarks}
+\label{sec:conclusion}
 
 For applications where the data is acquired by different sensors, we recommend to train a classifier with a selected high-quality data set and use GANs to map the other data to the ``training domain.''
 
