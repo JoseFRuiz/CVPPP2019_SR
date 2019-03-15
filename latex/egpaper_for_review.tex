@@ -66,32 +66,27 @@ University of Florida, Department of Electrical and Computer Engineering, Gaines
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   Plant phenotyping applications frequently require handling poor quality data due to non-controlled environmental conditions or difficulty in designing high-resolution sensors for some tasks. In this study, we propose a super-resolution (SR) algorithm that transforms low-resolution (LR) images into higher-quality images based on a generative adversarial network (GAN). Our scheme includes a network that generates images with two purposes: i) fooling a discriminator trained to detect real high-resolution (HR) images, and ii) increasing the classification performance. Our results show that the proposed approach allows creating super-resolved images appropriated for leaf-disease-based classification and imaging X-ray back-scatter scans of roots.
+   Plant phenotyping applications frequently require handling poor quality data due to non-controlled environmental conditions or difficulties in designing high-resolution sensors for some tasks. In this study, we propose a super-resolution (SR) algorithm that transforms low-resolution (LR) images into higher-quality images based on a generative adversarial network (GAN). Our scheme includes a network that generates images with two purposes: fooling a discriminator trained to detect real high-resolution (HR) images, as well as increasing the classification accuracy. Our results show that the proposed approach allows creating super-resolved images appropriate for leaf-disease-based classification and imaging X-ray back-scatter scans of roots.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 %\texttt{[THIS SECTION IS IN PROGRESS... MAIN IDEAS ARE LISTED BELOW]}\\
 %\texttt{[MOTIVATION]}\\
-High-throughput image-based phenotyping facilitates the measurement of features of the plants required for crop production analysis and the design of ecological models. This technology consists of tools of hardware and software that allows the acquisition and processing of the target biophysical data. Tasks that traditionally are carried out by visual inspection can be made efficiently by using standard and hyper-spectral cameras~\cite{Fahlgren2015}. However, these sensors usually have resolution limitations or are not appropriate to acquire a certain type of data, e.g., below-ground data. In this paper, we address the resolution problem by developing a weakly supervised super-resolution (SR) algorithm (which needs some image level labels) and apply it to three tasks:  i) disease classification, iii) soil/root classification on CT scans, and iii) root imaging based on a novel X-ray backscatter technology.
+High-throughput image-based phenotyping facilitates the measurement of features of plants that are required for applications such as crop production analysis or the design of ecological models. This technology consists of tools of hardware and software that allows the acquisition and processing of the target biophysical data. Tasks that traditionally are carried out by visual inspection can be made efficiently by using standard or hyper-spectral cameras~\cite{Fahlgren2015}. However, these sensors usually have resolution limitations or are not appropriate to acquire a certain type of data, e.g., below-ground biomass. In this paper, we develop a super-resolution (SR) algorithm to train a model that transform low-resolution (LR) images into SR images. To train the model, we require image level labels of LR images and high-resolution (HR) images without labels. This framework is suitable to improve the capability of a novel X-ray backscatter system (and similar tasks) where LR-HR pairs are not available for training. 
 
 %\texttt{[DIGITAL SIGNAL PROCESSING AND MACHINE LEARNING FOR ROOTS PHENOTYPING]}
 
-Digital signal processing (DSP) and machine learning (ML) techniques have been applied in phenotyping tasks such as detection, classification, and prediction~\cite{Singh2018}. Particularly, deep-learning has become very popular in the ML community but has not been extensively studied for plant phenotyping applications~\cite{Ubbens2017}. In \cite{Ramcharan2017}, a method for disease detection based on a deep learning model is proposed.
+Digital signal processing (DSP) and machine learning (ML) techniques have been applied in phenotyping tasks such as detection, classification, and prediction~\cite{Singh2018}. Particularly, deep-learning has become very popular in the ML community but has not been extensively studied for plant phenotyping applications~\cite{Ubbens2017}. Nevertheless, it has a wide range of potential applications, e.g., in \cite{Ramcharan2017}, a method for disease detection based on a deep learning model is proposed, which is implemented in mobile devices for field-data analysis, and in \cite{Giuffrida2017}, a generative adversarial network (GAN) is used for data augmentation of plant images.
 
-Image acquisition and processing on uncontrolled conditions is a challenge for automatic plant phenotyping that implies handling issues such as uneven illumination, complex background or low resolution (LR). These complications result more noticeable for certain applications. In this study, we are particularly interested in the imaging of roots in situ, where it is difficult to distinguish the target from their surroundings~\cite{Tabb2018}. More advanced non-invasive techniques for this application include electrical capacitance and ground-penetrating radar. However, these sensors still have restrictions in depth and resolution~\cite{Araus2014}.
+Image acquisition and processing on uncontrolled conditions is a challenge for automatic plant phenotyping that implies handling issues such as uneven illumination, complex background or LR sensors. These complications result more noticeable for certain applications. In this study, we are particularly interested in the imaging of roots in situ, where it is difficult to distinguish the target from their surroundings~\cite{Tabb2018}. More advanced non-invasive techniques for this application include electrical capacitance and ground-penetrating radar. However, these sensors still have restrictions in depth and resolution~\cite{Araus2014}.
 %\texttt{[SUPER RESOLUTION]}
 
-The SR task consists of recovering HR images from LR images. Many SR approaches can be found in the DSP and ML literature. Applications such as medical diagnostic heavily rely on high-quality images~\cite{Zhang2012}. This is an inherently ill-posed problem, i.e., no unique solution exists~\cite{Hui2018}. Therefore, the SR methods require regularization terms to constrain the search space. The loss function of an SR problem is usually the mean squared error (MSE) between the estimated SR image and the original HR image plus the regularization term~\cite{Ledig2017}. MSE minimization might not avoid visual artifacts. Some SR methods require pairs of LR-HR examples~\cite{Zeyde2012}, which is a practical disadvantage.
-
-Super-resolution algorithms promote the development of new alternatives to sense data, such as X-ray based sensors, since efficient algorithms can help to overcome weakness in hardware. A previous study about SR of plant images is described in \cite{Yamamoto2017}.
-
-
-A general adversarial network (GAN) can be used to learn a transformation between two domains~\cite{Hong2018}. In \cite{Giuffrida2017}, GANs are used for data augmentation in plant phenotyping.
+The SR task consists of recovering HR images from LR images. Many SR approaches can be found in the DSP and ML literature. Applications such as medical diagnostic heavily rely on high-quality images~\cite{Zhang2012}. This is an inherently ill-posed problem, i.e., no unique solution exists~\cite{Hui2018}. Therefore, the SR methods require regularization terms to constrain the search space. The loss function of an SR problem is usually the mean squared error (MSE) between the estimated SR image and the original HR image plus the regularization term. Recently, GANs have be used to learn a transformation between two domains~\cite{Hong2018}, that in the case of a SR application can be seen as the mapping from the LR domain to the HR domain~\cite{Ledig2017}. Some of the issues in SR methods are that MSE minimization does not avoid visual artifacts or that some of them require training pairs of LR-HR examples~\cite{Zeyde2012}, which is a practical disadvantage. An SR method for plant images (trained with HR-LR pairs of images) is proposed in \cite{Yamamoto2017}. Their results show that this technique allows the improvement of the classification performance obtained by LR images.
 
 %\texttt{[BRIEF DESCRIPTION OF THE PROPOSED METHOD]}
 
-We proposed a weakly supervised GAN for increasing the resolution of LR plant and root images. This is a weakly supervised-approach since it uses image-level labels to learn to enhance lower level details. In this configuration, the regularization of the SR problem force the generated images to be both, ``realistic-like'' images and appropriate for classification. The remainder of this paper is divided as follows: Sec.~\ref{sec:methods} described the proposed method, Sec.~\ref{sec:experiments} includes details of the implementation of the experiments and the results on three types of data, and Sec.~\ref{sec:conclusion} concludes the study.
+SR algorithms promote the development of new alternatives to sense data, such as X-ray based sensors, since efficient algorithms can help to overcome weakness in hardware. We proposed a weakly supervised GAN for increasing the resolution of LR plant and root images. This is a weakly supervised-approach since it uses image-level labels to learn to enhance lower level details. In this configuration, the regularization of the SR problem force the generated images to be both, ``realistic-like'' images and appropriate for classification. The remainder of this paper is divided as follows: Sec.~\ref{sec:methods} described the proposed method, Sec.~\ref{sec:experiments} includes details of the implementation of the experiments and the results on three types of data, and Sec.~\ref{sec:conclusion} concludes the study.
 
 % ``Here high-throughput image-based phenotyping is defined as technology that can minimally image hundreds of plants per day.'' ``The goal of plant imaging and analysis is to measure the physiological, growth, development, and other phenotypic properties of plants through automated processes.'' ``Digital camera technology has become relatively inexpensive and ubiquitous, leading to a recent surge in high-throughput phenotyping systems that utilize plant imaging to capture data''~\cite{Fahlgren2015}.
 
@@ -214,34 +209,52 @@ Figure~\ref{fig:D_net} shows the architecture for $C$ and $D.$ We use the same a
 
 % \texttt{[THIS SECTION IS IN PROGRESS.  TABLES CONTAIN CLASSIFICATION ACCURACY ON HR, SR, AND LR DATA OF TWO DATASETS: LEAF-BASED DISEASE CLASSIFICATION AND CT SCANS CORES OF TURFACE AND ROOTS. FIGURES CONTAIN EXAMPLES OF IMAGES ON THESE DATASETS AND THE RESULTS OF THE METHOD APPLIED TO THE X-RAY BACKSCATTER SCANS.]}\\
 
-We perform experiments on three datasets. The first one contains 3719 images (from PlantVillage project~\cite{Hughes2015}) of tomato leaves divided into two classes: Healthy (1592) and Bacteria (2127). The second dataset is formed by the images of the scans of two CT cores.  The third dataset consists of 8 buried-roots scans and 4 soil scans, which were acquired by the authors using a novel x-ray backscatter system. Note that our method requires labels of the LR images at image level. As gradient-based learning rule, we use the Adaptive Moment Estimation (Adam). 
+We perform experiments on two datasets. The first one contains 3719 images (from PlantVillage project~\cite{Hughes2015}) of tomato leaves divided into two classes: Healthy (1592) and Bacteria (2127). The second dataset consists of 8 buried-roots scans and 4 soil scans, which were acquired by the authors using a novel x-ray backscatter system. Note that our method requires labels of the LR images at image level. As gradient-based learning rule, we use the Adaptive Moment Estimation (Adam). 
 
 \subsection{Disease Classification}
 %\url{https://github.com/spMohanty/PlantVillage-Dataset}
 We apply our method to an image-based plant disease classification task~\cite{Mohanty2016}. We consider the original grayscale images ($256\times 256$) of the PlantVillage dataset as HR data. We create the LR versions of this images by downsampling 2 (LR2x: $128\times 128$), 4 (LR4x: $64\times 64$), 8 (LR8x: $32\times 32$), and 16 (LR16x: $16\times 16$) times and upsampling them again to $256\times 256$ by a bicubic interpolation. Table~\ref{tab:results} shows the classification accuracy in a test set (200 images per class) obtained when trained the classifier only with HR data (baseline) and when trained with LR data and with SR data (SR2x, SR4x, SR8x, and SR16x applied to LR2x, LR4x, LR8x, and LR16x, respectively). Figure~\ref{fig:srimages} contains some examples of HR, LR and SR of each class (Tomato - healthy and Tomato - bacterial spot).
 
+% \begin{table}[h]
+% \caption{Classification performance on the PlantVillage dataset applied to a test set.}
+% \label{tab:results}
+% \centering
+% \begin{tabular}{|l|c|c|c|}
+% \hline
+%   Scale   & Accuracy & TP & TN \\
+% \hline
+% \hline
+% HR & 97.5 & 95.0 & 100 \\
+% \hline
+% LR2x & 90.5 & 81.0 & 100 \\
+% SR2x & \textbf{97.0} & \textbf{94.0} & 100 \\
+% \hline
+% LR4x & 68.3 & 36.5 & 100 \\
+% SR4x & \textbf{94.7} & \textbf{89.5} & 100 \\
+% \hline
+% LR8x & 51.0 & 02.0 & \textbf{100} \\
+% SR8x & \textbf{81.3} & \textbf{87.5} & 75.0 \\
+% \hline
+% LR16x & 50.0 & 00.0 & \textbf{100} \\
+% SR16x & \textbf{59.7} & \textbf{94.5} & 25.0 \\
+% \hline
+% \end{tabular}
+% \end{table}
+
 \begin{table}[h]
 \caption{Classification performance on the PlantVillage dataset applied to a test set.}
 \label{tab:results}
 \centering
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{|c|c|c|}
 \hline
-  Scale   & Accuracy & TP & TN \\
+  Downsampling   & Classifier & SR-Classifier \\
 \hline
 \hline
-HR & 97.5 & 95.0 & 100 \\
-\hline
-LR2x & 90.5 & 81.0 & 100 \\
-SR2x & \textbf{97.0} & \textbf{94.0} & 100 \\
-\hline
-LR4x & 68.3 & 36.5 & 100 \\
-SR4x & \textbf{94.7} & \textbf{89.5} & 100 \\
-\hline
-LR8x & 51.0 & 02.0 & \textbf{100} \\
-SR8x & \textbf{81.3} & \textbf{87.5} & 75.0 \\
-\hline
-LR16x & 50.0 & 00.0 & \textbf{100} \\
-SR16x & \textbf{59.7} & \textbf{94.5} & 25.0 \\
+Original & 83.7 & \textbf{88.3} \\
+2x & 82.7 & \textbf{90.3} \\
+4x & 81.3 & \textbf{89.7} \\
+8x & 81.0 & \textbf{85.5} \\
+16x & 71.7 & \textbf{83.5} \\
 \hline
 \end{tabular}
 \end{table}
@@ -254,48 +267,48 @@ SR16x & \textbf{59.7} & \textbf{94.5} & 25.0 \\
 \label{fig:srimages}
 \end{figure*}
 
-\subsection{CT cores-SR}
-\texttt{[THESE RESULTS MIGHT BE REMOVED]}
-In this experiment, we use CT scans of two cores, one that contains only turface and other that contains roots and turface. Table~\ref{tab:results_cores} shows the classification accuracy in a test set (200 images per class). Figure~\ref{fig:srimages_cores} contains some examples of HR, LR and SR of each class (Turface+Roots and Turface).
+% \subsection{CT cores-SR}
+% \texttt{[THESE RESULTS MIGHT BE REMOVED]}
+% In this experiment, we use CT scans of two cores, one that contains only turface and other that contains roots and turface. Table~\ref{tab:results_cores} shows the classification accuracy in a test set (200 images per class). Figure~\ref{fig:srimages_cores} contains some examples of HR, LR and SR of each class (Turface+Roots and Turface).
 
-\begin{table}[h]
-\caption{Classification performance on the CT cores dataset applied to a test set.}
-\label{tab:results_cores}
-\centering
-\begin{tabular}{|l|c|c|c|}
-\hline
-  Scale   & Accuracy & TP & TN \\
-\hline
-\hline
-HR & 87.7 & 73.3 & 100 \\
-\hline
-LR2x & 86.4 & 72.8 & 100 \\
-SR2x & \textbf{86.7} & \textbf{73.3} & 100 \\
-\hline
-LR4x & 81.5 & 63.0 & 100 \\
-SR4x & \textbf{86.0} & \textbf{72.0} & 100 \\
-\hline
-LR8x & 54.9 & 09.5 & \textbf{100} \\
-SR8x & \textbf{88.3} & \textbf{76.5} & 100 \\
-\hline
-LR16x & 50.3 & 00.0 & \textbf{100} \\
-SR16x & \textbf{79.9} & \textbf{59.8} & 100 \\
-\hline
-\end{tabular}
-\end{table}
+% \begin{table}[h]
+% \caption{Classification performance on the CT cores dataset applied to a test set.}
+% \label{tab:results_cores}
+% \centering
+% \begin{tabular}{|l|c|c|c|}
+% \hline
+%   Scale   & Accuracy & TP & TN \\
+% \hline
+% \hline
+% HR & 87.7 & 73.3 & 100 \\
+% \hline
+% LR2x & 86.4 & 72.8 & 100 \\
+% SR2x & \textbf{86.7} & \textbf{73.3} & 100 \\
+% \hline
+% LR4x & 81.5 & 63.0 & 100 \\
+% SR4x & \textbf{86.0} & \textbf{72.0} & 100 \\
+% \hline
+% LR8x & 54.9 & 09.5 & \textbf{100} \\
+% SR8x & \textbf{88.3} & \textbf{76.5} & 100 \\
+% \hline
+% LR16x & 50.3 & 00.0 & \textbf{100} \\
+% SR16x & \textbf{79.9} & \textbf{59.8} & 100 \\
+% \hline
+% \end{tabular}
+% \end{table}
 
-\begin{figure*}[h]
-\begin{center}
-\includegraphics[scale=0.40]{results/srimages_cores.pdf}
-\end{center}
-   \caption{a) Turface+Roots. b) Turface}
-\label{fig:srimages_cores}
-\end{figure*}
+% \begin{figure*}[h]
+% \begin{center}
+% \includegraphics[scale=0.40]{results/srimages_cores.pdf}
+% \end{center}
+%   \caption{a) Turface+Roots. b) Turface}
+% \label{fig:srimages_cores}
+% \end{figure*}
 
 \subsection{X-ray backscatter data-SR}
 
 % See the dataset at http://gigadb.org/dataset/100346 
-X-ray bacscatter technology allows scanning roots of plants non-destructively. We are currently working on the developing of a device to this end. Figure~\ref{fig:srtest} shows SR applied to this type of data.
+X-ray backscatter technology allows scanning roots of plants in a non-destructive way. We are currently working on the developing of a device to this end. Figure~\ref{fig:srtest} shows SR applied to this type of data.
 
 \begin{figure*}[h]
 \begin{center}
