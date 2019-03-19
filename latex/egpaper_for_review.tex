@@ -116,7 +116,7 @@ where $C$ outputs the probability that its input $x$ comes from the target class
 
 \subsection{Weakly supervised adversarial network}
 
-Our proposed method is illustrated in Fig.~\ref{fig:cgan}. The network is divided into three stages, i) $G$ that generates SR images from LR inputs, ii) $D$ that classifies HR images from SR images, and iii) $C$ that is our additional regularization to the traditional GAN, which allows enhancing relevant aspects in the generated images for classification purposes. 
+Our proposed method is illustrated in Fig.~\ref{fig:cgan}. The network is divided into three stages, i) $G$ that generates SR images from LR inputs, ii) $D$ that classifies HR images from SR images, and iii) $C$ that is our additional regularization to the traditional GAN, which allows enhancing relevant aspects in the generated images for classification purposes. Figure~\ref{fig:D_net} shows the architecture for $C$ and $D.$ We use the same architecture for both of them, likewise, Fig.~\ref{fig:G_net} shows the generator architecture.
 
 \begin{figure}[h]
 \begin{center}
@@ -124,6 +124,22 @@ Our proposed method is illustrated in Fig.~\ref{fig:cgan}. The network is divide
 \end{center}
    \caption{Generation of SR images by an adversarial network. This method consists of three blocks: generator ($G$), discriminator ($D$), and classifier ($C$).}
 \label{fig:cgan}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.20]{D_net.png}
+\end{center}
+   \caption{Discriminator ($D$) and classifier ($C$) network. Same architecture is used for each one of them.}
+\label{fig:D_net}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.17]{G_net.png}
+\end{center}
+\label{fig:G_net}
+\caption{Generator (G) network.}
 \end{figure}
 
 Our proposed formulation is expressed as follows
@@ -134,9 +150,11 @@ Our proposed formulation is expressed as follows
 & \min_{C,G} \max_D \E_{\ve{z} \sim p(\ve{z|L_0})}[\log C(G(\ve{z}))] \\ & +  \E_{\ve{z} \sim p(\ve{z|L_1})}[1-\log C(G(\ve{z}))] \\ & + \E_{\ve{x} \sim p(\ve{x})}[\log D(\ve{x})] + \E_{\ve{z} \sim p(\ve{z})}[\log (1 - D(G(\ve{z})))].
 \end{aligned}
 \end{eqnarray}
-Note that $G$ maps the labeled-LR data $z$ to a higher-resolution domain. Since we assume that the HR labels are unknown, the classifier is trained with the SR data. Algorithm~\ref{alg:srcgan} contains the pseudo-code of our method.
 
-\begin{algorithm}[h]
+
+Note that $G$ maps the labeled-LR data $z$ to a higher-resolution domain. Since we assume that the HR labels are unknown, the classifier is trained with the SR data. Algorithm~\ref{alg:srcgan} contains the pseudo-code.
+
+\begin{algorithm}[h!]
     \caption{Minibatch gradient descent training of the \textbf{weakly supervised adversarial network}.}
     \label{alg:srcgan}
     \begin{algorithmic}
@@ -163,25 +181,6 @@ Note that $G$ maps the labeled-LR data $z$ to a higher-resolution domain. Since 
     \STATE The gradient-based updates can use any standard gradient-based learning rule.
     \end{algorithmic}
 \end{algorithm}
-
-
-Figure~\ref{fig:D_net} shows the architecture for $C$ and $D.$ We use the same architecture for both of them. Figure~\ref{fig:G_net} shows the generator architecture.
-
-\begin{figure*}[h]
-\begin{center}
-\includegraphics[scale=0.35]{D_net.png}
-\end{center}
-   \caption{Discriminator ($D$) and classifier ($C$) network. Same architecture is used for each one of them.}
-\label{fig:D_net}
-\end{figure*}
-
-\begin{figure*}[h]
-\begin{center}
-\includegraphics[scale=0.30]{G_net.png}
-\end{center}
-\label{fig:G_net}
-\caption{Generator (G) network.}
-\end{figure*}
 
 %------------------------------------------------------------------------
 \section{Experiments}
@@ -215,7 +214,7 @@ None & 83.7 & \textbf{88.3} \\
 
 \begin{figure*}[h]
 \begin{center}
-\includegraphics[scale=0.40]{results/srimages.pdf}
+\includegraphics[scale=0.35]{results/srimages.pdf}
 \end{center}
    \caption{a) Tomato - healthy. b) Tomato - bacterial spot} 
 \label{fig:srimages}
@@ -227,7 +226,7 @@ Aiming at scanning roots of plants in a non-invasive and non-destructive way, we
 
 \begin{figure*}[h]
 \begin{center}
-\includegraphics[scale=0.70]{results/srxray.pdf}
+\includegraphics[scale=0.60]{results/srxray.pdf}
 \end{center}
    \caption{SR applied to X-ray backscatter images. a) Training data; b) Test data}
 \label{fig:srtest}
@@ -238,9 +237,9 @@ Aiming at scanning roots of plants in a non-invasive and non-destructive way, we
 
 We proposed an SR method that creates images that are both, similar to HR images and appropriate for a classification task. For this purpose, we use an adversarial configuration where a generator intends to fool a discriminator (trained to distinguish between HR and SR images) and, at the same time, to reduce the classification error. Results show that our method helps to improve the classification accuracy. Furthermore, we use this method to enhance the contrast and facilitate the segmentation of noisy and LR images such as X-ray backscatter radiography images of buried roots. A practical advantage of this method is that it does not require pairs of LR-HR images for training.
 
-As future work, we plan to acquire a bigger X-ray backscatter radiography dataset. Also, we propose the extension of the analysis to 3-D reconstruction, and target-detection and segmentation applications. Finally, since the generator maps the original data into the distribution of the HR data, this configuration might be applied in classification problems where the signals are acquired by different sensors.
+As future work, we plan to acquire more X-ray backscatter radiography images of soil and roots and apply the method to 3D data, e.g., CT scans. Also, this SR method might be considered as a preprocessing stage for applications such as feature extraction or segmentation. Finally, since the generator maps the original data into one distribution (in our experiments, the distribution of the HR data), this configuration might be applied in classification problems where the signals are acquired by different sensors.
 
-\clearpage
+%\clearpage
 
 {\small
 \bibliographystyle{ieee}
